@@ -6,6 +6,7 @@ st.set_page_config(layout="wide")
 @st.cache_data
 def get_hotels():
     """Return a list of hotels from the API."""
+    print("endpoint: ",st.secrets["api"]["endpoint"])
     api_endpoint = st.secrets["api"]["endpoint"]
     response = requests.get(f"{api_endpoint}/Hotels", timeout=10)
     return response
