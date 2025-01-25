@@ -18,7 +18,7 @@ param deployments array = [
   }
 ]
 
-var openAIName = '${uniqueString(resourceGroup().id)}-openai'
+var openAIName = 'openai-zurlocloud-running'
 
 @description('Creates an Azure OpenAI resource.')
 resource openAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -52,3 +52,5 @@ resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01
     }
   }
 }]
+
+// az deployment group create --resource-group zurlocloud-running-store --template-file ./DeployAzureResources.bicep

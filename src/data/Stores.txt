@@ -1,0 +1,30 @@
+[
+  {
+    "store name": "Zurlocloud Running Store New York",
+    "location": "New York, USA",
+    "size": "large",
+    "employees": 50,
+    "training programs": true
+  },
+  {
+    "store name": "Zurlocloud Running Store Los Angeles",
+    "location": "Los Angeles, USA",
+    "size": "large",
+    "employees": 45,
+    "training programs": true
+  },
+  {
+    "store name": "Zurlocloud Running Store Chicago",
+    "location": "Chicago, USA",
+    "size": "medium",
+    "employees": 30,
+    "training programs": true
+  },
+  {
+    "store name": "Zurlocloud Running Store Houston",
+    "location": "Houston, USA",
+    "size": "medium",
+    "employees": 25,
+    "training programs": true
+  }
+]

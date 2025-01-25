@@ -1,7 +1,7 @@
 name: API Deployment
 env:
-  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/techexcel/csapi:${{github.run_number}}"
-  appName: ${{ vars.APP_PREFIX }}-api
+  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningApi:${{github.run_number}}"
+  appName: api-zurlocloud-running
   appPath: ./src/ContosoSuitesWebAPI
 on:
   push:

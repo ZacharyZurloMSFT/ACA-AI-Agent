@@ -2,7 +2,7 @@
 param location string = resourceGroup().location
 
 @description('Password for the SQL Server admin user. PLEASE CHANGE THIS BEFORE DEPLOYMENT!')
-param sqlAdminPassword string = 'g@G9@2nD7C1BP%uh'
+param sqlAdminPassword string = 'Password123!'
 
 @description('Model deployments for OpenAI')
 param deployments array = [
@@ -21,34 +21,27 @@ param deployments array = [
 @description('Restore the service instead of creating a new instance. This is useful if you previously soft-deleted the service and want to restore it. If you are restoring a service, set this to true. Otherwise, leave this as false.')
 param restore bool = false
 
-@description('The email address of the owner of the service')
-@minLength(1)
-param apimPublisherEmail string = 'support@contososuites.com'
 
-var apiManagementServiceName = 'apim-${uniqueString(resourceGroup().id)}'
-var apimSku = 'Basicv2'
-var apimSkuCount = 1
-var apimPublisherName = 'Contoso Suites'
 
-var cosmosDbName = '${uniqueString(resourceGroup().id)}-cosmosdb'
-var cosmosDbDatabaseName = 'ContosoSuites'
-var storageAccountName = '${uniqueString(resourceGroup().id)}sa'
-var searchServiceName = '${uniqueString(resourceGroup().id)}-search'
-var openAIName = '${uniqueString(resourceGroup().id)}-openai'
-var speechServiceName = '${uniqueString(resourceGroup().id)}-speech'
-var languageServiceName = '${uniqueString(resourceGroup().id)}-lang'
-var webAppNameApi = '${uniqueString(resourceGroup().id)}-api'
-var webAppNameDash = '${uniqueString(resourceGroup().id)}-dash'
-var appServicePlanName = '${uniqueString(resourceGroup().id)}-cosu-asp'
-var functionAppName = '${uniqueString(resourceGroup().id)}-cosu-fn'
-var functionAppServicePlanName = '${uniqueString(resourceGroup().id)}-cosu-fn-asp'
-var logAnalyticsName = '${uniqueString(resourceGroup().id)}-cosu-la'
-var appInsightsName = '${uniqueString(resourceGroup().id)}-cosu-ai'
+var cosmosDbName = 'cosmosdb-zurlocloud-running'
+var cosmosDbDatabaseName = 'ZurlocloudRunningStores'
+var storageAccountName = 'stgacctzurlocloudrunning'
+var searchServiceName = 'ai-search-zurlocloud-running'
+var openAIName = 'openai-zurlocloud-running'
+var speechServiceName = 'speech-serv-zurlocloud-running'
+var languageServiceName = 'lang-serv-zurlocloud-running'
+var webAppNameApi = 'api-zurlocloud-running'
+var webAppNameDash = 'dashboard-zurlocloud-running'
+var appServicePlanName = 'asp-zurlocloud-running'
+var functionAppName = 'function-zurlocloud-running'
+var functionAppServicePlanName = 'fn-asp-zurlocloud-running'
+var logAnalyticsName = 'la-zurlocloud-running'
+var appInsightsName = 'app-insight-zurlocloud-running'
 var webAppSku = 'S1'
-var registryName = '${uniqueString(resourceGroup().id)}cosureg'
+var registryName = 'acrzurlocloudrunning'
 var registrySku = 'Standard'
-var sqlServerName = '${uniqueString(resourceGroup().id)}-sqlserver'
-var sqlDatabaseName = 'ContosoSuitesBookings'
+var sqlServerName = 'sqlserver-zurlocloud-running'
+var sqlDatabaseName = 'ZurlocloudRunningOrders'
 var sqlAdminUsername = 'contosoadmin'
 
 var locations = [
@@ -255,7 +248,7 @@ resource appServiceApp 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistry.name}.azurecr.io/${uniqueString(resourceGroup().id)}/techexcel/csapi'
+      linuxFxVersion: 'DOCKER|${containerRegistry.name}.azurecr.io/zurlocloudrunningstore/runningApi'
       http20Enabled: true
       minTlsVersion: '1.2'
       appCommandLine: ''
@@ -294,7 +287,7 @@ resource appServiceAppDash 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistry.name}.azurecr.io/${uniqueString(resourceGroup().id)}/techexcel/csdash'
+      linuxFxVersion: 'DOCKER|${containerRegistry.name}.azurecr.io/zurlocloudrunningstore/runningDash'
       http20Enabled: true
       minTlsVersion: '1.2'
       appCommandLine: ''
@@ -374,22 +367,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-resource apiManagementService 'Microsoft.ApiManagement/service@2023-09-01-preview' = {
-  name: apiManagementServiceName
-  location: location
-  sku: {
-    name: apimSku
-    capacity: apimSkuCount
-  }
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    publisherEmail: apimPublisherEmail
-    publisherName: apimPublisherName
-    restore: restore
-  }
-}
+
 
 output cosmosDbEndpoint string = cosmosDbAccount.properties.documentEndpoint
 output storageAccountName string = storageAccount.name
@@ -402,4 +380,6 @@ output container_registry_name string = containerRegistry.name
 output application_name_dash string = appServiceAppDash.name
 output application_url_dash string = appServiceAppDash.properties.hostNames[0]
 output function_app_name string = functionApp.name
-output apiManagementServiceName string = apiManagementService.name
+
+
+// az deployment group create --resource-group zurlocloud-running-store --template-file ./DeployAzureResources.bicep

@@ -1,15 +1,15 @@
 name: Dashboard Deployment
 env:
-  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/techexcel/csdash:${{github.run_number}}"
-  appName: ${{ vars.APP_PREFIX }}-dash
-  appPath: ./src/ContosoSuitesDashboard
+  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningDash:${{github.run_number}}"
+  appName: dashboard-zurlocloud-running
+  appPath: ./src/ZurlocloudRunningDashboard
 on:
   push:
     branches: [ main ]
-    paths: src/ContosoSuitesDashboard/**
+    paths: src/ZurlocloudRunningDashboard/**
   pull_request:
     branches: [ main ]
-    paths: src/ContosoSuitesDashboard/**
+    paths: src/ZurlocloudRunningDashboard/**
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:

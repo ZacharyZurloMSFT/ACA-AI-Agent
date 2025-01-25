@@ -17,7 +17,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "streamlit",
-      "cwd": "${workspaceFolder}/src/ContosoSuitesDashboard",
+      "cwd": "${workspaceFolder}/src/ZurlocloudRunningDashboard",
       "args": [
         "run",
         "Index.py"
