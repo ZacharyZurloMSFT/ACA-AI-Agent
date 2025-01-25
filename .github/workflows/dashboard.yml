@@ -1,6 +1,6 @@
 name: Dashboard Deployment
 env:
-  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningDash:${{github.run_number}}"
+  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningdash:${{github.run_number}}"
   appName: dashboard-zurlocloud-running
   appPath: ./src/ZurlocloudRunningDashboard
 on:

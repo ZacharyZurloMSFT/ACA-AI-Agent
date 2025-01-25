@@ -1,6 +1,6 @@
 name: API Deployment
 env:
-  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningApi:${{github.run_number}}"
+  imageName: "${{ secrets.ACR_LOGIN_SERVER }}/zurlocloudrunningstore/runningapi:${{github.run_number}}"
   appName: api-zurlocloud-running
   appPath: ./src/ContosoSuitesWebAPI
 on:
