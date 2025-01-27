@@ -11,13 +11,7 @@ def main():
 
     Use the navigation bar on the left to navigate to the different pages of the dashboard.
 
-    Pages include:
-    1. Chat with Data. Used in Exercise 01.
-    2. API Integration. Used in Exercise 02.
-    3. Vector Search. Used in Exercise 03.
-    4. Call Center. Used in Exercise 04.
-    5. Call Center Search. Used in Exercise 04.
-    6. Copilot Chat. Used in Exercise 05.
+
     """
     )
 

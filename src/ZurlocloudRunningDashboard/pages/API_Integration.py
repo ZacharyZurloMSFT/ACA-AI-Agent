@@ -12,10 +12,10 @@ def get_stores():
     return response
 
 @st.cache_data
-def get_hotel_bookings(hotel_id):
+def get_store_orders(store_id):
     """Return a list of bookings for the specified hotel."""
     api_endpoint = st.secrets["api"]["endpoint"]
-    response = requests.get(f"{api_endpoint}/Stores/{hotel_id}/Orders", timeout=10)
+    response = requests.get(f"{api_endpoint}/Stores/{store_id}/Orders", timeout=10)
     return response
 
 @st.cache_data
@@ -36,21 +36,24 @@ def main():
     the Semantic Kernel library to generate SQL statements from natural language
     queries and display them in a Streamlit app.
 
-    ## Select a Hotel
+    ## Select a Store
     """
     )
 
     # Display the list of hotels as a drop-down list
-    store_json = get_stores().json()
+    stores_json = get_stores().json()
     # Reshape hotels to an object with hotelID and hotelName
     stores = [{"id": store["storeID"], "name": "Zurlocloud Running - " + store["city"]} for store in stores_json]
+    print(stores)
     
-    selected_store = st.selectbox("Store:", store, format_func=lambda x: x["city"])
+    selected_store = st.selectbox("Store:", stores, format_func=lambda x: x["name"])
 
     # Display the list of orders for the selected hotel as a table
     if selected_store:
-        hotel_id = selected_store["id"]
-        orders = get_store_orders(hotel_id).json()
+        print(selected_store)
+        store_id = selected_store["id"]
+        orders = get_store_orders(store_id).json()
+        print(orders)
         st.write("### Orders")
         st.table(orders)
 

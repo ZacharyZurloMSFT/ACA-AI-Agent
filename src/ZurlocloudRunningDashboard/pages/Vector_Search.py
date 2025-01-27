@@ -17,17 +17,13 @@ def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0
     return response
 
 def main():
-    """Main function for the Vector Search over Maintenance Requests Streamlit page."""
+    """Main function for the Vector Search over Inventory Requests Streamlit page."""
 
     st.write(
         """
-        # Vector Search for Maintenance Requests.
+        # Vector Search for Inventory Requests.
 
-        This Streamlit dashboard is intended to demonstrate how we can use
-        the Vector Search to find maintenance requests that are similar to
-        a given query.
-
-        ## Enter a Maintenance Request query
+        ## Enter an Inventory Request query
         """
     )
 

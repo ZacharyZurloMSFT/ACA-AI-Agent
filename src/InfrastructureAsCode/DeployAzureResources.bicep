@@ -24,7 +24,7 @@ param restore bool = false
 
 
 var cosmosDbName = 'cosmosdb-zurlocloud-running'
-var cosmosDbDatabaseName = 'ZurlocloudRunningStores'
+var cosmosDbDatabaseName = 'ZurlocloudRunning'
 var storageAccountName = 'stgacctzurlocloudrunning'
 var searchServiceName = 'ai-search-zurlocloud-running'
 var openAIName = 'openai-zurlocloud-running'

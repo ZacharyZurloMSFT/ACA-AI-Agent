@@ -16,6 +16,12 @@ namespace ZurlocloudRunningWebAPI.Entities
         [JsonPropertyName("product_id")]
         public int product_id { get; set; }
 
+        [JsonPropertyName("store")]
+        public string Store { get; set; }
+
+        [JsonPropertyName("product_name")]
+        public string ProductName { get; set; }
+
         [JsonPropertyName("source")]
         public string source { get; set; }
 

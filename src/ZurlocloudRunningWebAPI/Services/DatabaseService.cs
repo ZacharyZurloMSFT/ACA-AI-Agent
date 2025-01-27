@@ -15,6 +15,37 @@ public class DatabaseService : IDatabaseService
     /// <summary>
     /// Get all stores from the database.
     /// </summary>
+    [KernelFunction("get_products")]
+    [Description("Get all products.")]
+    public async Task<IEnumerable<AllProducts>> GetProducts()
+    {
+        var sql = "SELECT ProductID, ProductName, ProductCategory, Price FROM dbo.AllProducts";   
+
+        using var conn = new SqlConnection(
+            connectionString: Environment.GetEnvironmentVariable("SQLAZURECONNSTR_ContosoSuites")!
+        );
+        conn.Open();
+        using var cmd = new SqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+        var products = new List<AllProducts>();
+        while (await reader.ReadAsync())
+        {
+            products.Add(new AllProducts
+            {
+                ProductID = reader.GetInt32(0),
+                ProductName = reader.GetString(1),
+                ProductCategory = reader.GetString(2),
+                Price = reader.GetDecimal(3)
+            });
+ 
+        }
+        conn.Close();
+
+        return products;
+    }
+
+
+
     [KernelFunction("get_stores")]
     [Description("Get all stores.")]
     public async Task<IEnumerable<Store>> GetStores()
@@ -36,6 +67,7 @@ public class DatabaseService : IDatabaseService
                 City = reader.GetString(1),
                 Country = reader.GetString(2)
             });
+
  
         }
         conn.Close();
@@ -43,16 +75,17 @@ public class DatabaseService : IDatabaseService
         return stores;
     }
 
+
     /// <summary>
     /// Get a specific store's orders from the database.
     /// </summary>
     [KernelFunction]
-    [Description("Get all orders for a single store.")]
-    public async Task<IEnumerable<Orders>> GetOrdersForStore(
+    [Description("Get all products for a single store.")]
+    public async Task<IEnumerable<StoreProducts>> GetProductsForStore(
         [Description("The ID of the store")] int storeId
         )
     {
-        var sql = "SELECT OrderID, CustomerID, StoreID, OrderDate, TotalAmount FROM dbo.Orders WHERE StoreID = @StoreID";
+        var sql = "SELECT StoreID, ProductID, ProductName, Price, Quantity FROM dbo.StoreProducts WHERE StoreID = @StoreID";
         using var conn = new SqlConnection(
             connectionString: Environment.GetEnvironmentVariable("SQLAZURECONNSTR_ContosoSuites")!
         );
@@ -60,98 +93,27 @@ public class DatabaseService : IDatabaseService
         using var cmd = new SqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@StoreID", storeId);
         using var reader = await cmd.ExecuteReaderAsync();
-        var orders = new List<Orders>();
+        var products = new List<StoreProducts>();
         while (await reader.ReadAsync())
         {
-            orders.Add(new Orders
+            products.Add(new StoreProducts
             {
-                OrderID = reader.GetInt32(0),
-                CustomerID = reader.GetInt32(1),
-                StoreID = reader.GetInt32(2),
-                OrderDate = reader.GetDateTime(3),
-                TotalAmount = reader.GetDecimal(4)
+                StoreID = reader.GetInt32(0),
+                ProductID = reader.GetInt32(1),
+                ProductName = reader.GetString(2),
+                Price = reader.GetDecimal(3),
+                Quantity = reader.GetInt32(4)
             });
 
         }
         conn.Close();
 
-        return orders;
+        return products;
     }
 
 
 
-    public async Task<IEnumerable<Orders>> GetOrdersWithMultipleProducts()
-    {
-        var sql = """
-            SELECT
-                b.OrderID,
-                b.CustomerID,
-                b.StoreID,
-                b.OrderDate,
-                b.TotalAmount,
-            FROM dbo.Orders b
-            WHERE
-                (
-                    SELECT COUNT(1) 
-                    FROM dbo.ProductOrder po 
-                    WHERE po.OrderID = o.OrderID
-                ) > 1;
-            """;
-        using var conn = new SqlConnection(
-            connectionString: Environment.GetEnvironmentVariable("SQLAZURECONNSTR_ContosoSuites")!
-        );
-        conn.Open();
-        using var cmd = new SqlCommand(sql, conn);
-        using var reader = await cmd.ExecuteReaderAsync();
-        var orders = new List<Orders>();
-        while (await reader.ReadAsync())
-        {
-            orders.Add(new Orders
-            {
-                OrderID = reader.GetInt32(0),
-                CustomerID = reader.GetInt32(1),
-                StoreID = reader.GetInt32(2),
-                OrderDate = reader.GetDateTime(3),
-                TotalAmount = reader.GetDecimal(4)
-            });
-
-        }
-        conn.Close();
-
-        return orders;
-    }
 
 
 
-    /// <summary>
-    /// Get bookings for a specific store that are after a specified date.
-    /// </summary>
-    public async Task<IEnumerable<Orders>> GetOrdersByDate(int storeId, DateTime dt)
-    {
-        var sql = "SELECT OrderID, CustomerID, StoreID, OrderDate, TotalAmount FROM dbo.Orders WHERE StoreID = @StoreID AND OrderDate >= @OrderBeginDate";
-        using var conn = new SqlConnection(
-            connectionString: Environment.GetEnvironmentVariable("SQLAZURECONNSTR_ContosoSuites")!
-        );
-        conn.Open();
-        using var cmd = new SqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@StoreID", storeId);
-        cmd.Parameters.AddWithValue("@OrderBeginDate", dt);
-        using var reader = await cmd.ExecuteReaderAsync();
-        var orders = new List<Orders>();
-        while (await reader.ReadAsync())
-        {
-            orders.Add(new Orders
-            {
-                OrderID = reader.GetInt32(0),
-                CustomerID = reader.GetInt32(1),
-                StoreID = reader.GetInt32(2),
-                OrderDate = reader.GetDateTime(3),
-                TotalAmount = reader.GetDecimal(4)
-            });
-
-        }
-        conn.Close();
-
-        return orders;
-    }
 }

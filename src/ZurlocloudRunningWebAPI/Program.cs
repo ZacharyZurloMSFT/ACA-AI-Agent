@@ -96,32 +96,41 @@ app.MapGet("/", async () =>
 
 app.MapGet("/Stores", async () => 
 {
-    // add logging when the endpoint is hit
-    Console.WriteLine("GetStores endpoint hit");
-    var hotels = await app.Services.GetRequiredService<IDatabaseService>().GetStores();
-    return hotels;
+
+    var stores = await app.Services.GetRequiredService<IDatabaseService>().GetStores();
+    return stores;
 })
     .WithName("GetStores")
     .WithOpenApi();
 
 
-// Retrieve the bookings for a specific hotel.
-app.MapGet("/Stores/{storeId}/Orders/", async (int storeId) => 
+app.MapGet("/Products", async () => 
 {
-    var orders = await app.Services.GetRequiredService<IDatabaseService>().GetOrdersForStore(storeId);
-    return orders;
+
+    var products = await app.Services.GetRequiredService<IDatabaseService>().GetProducts();
+    return products;
 })
-    .WithName("GetOrdersForStore")
+    .WithName("GetProducts")
     .WithOpenApi();
 
-// Retrieve the bookings for a specific hotel that are after a specified date.
-app.MapGet("/Stores/{storeId}/Orders/{min_date}", async (int storeId, DateTime min_date) => 
+
+// Retrieve the bookings for a specific hotel.
+app.MapGet("/Stores/{storeId}/Products/", async (int storeId) => 
 {
-    var bookings = await app.Services.GetRequiredService<IDatabaseService>().GetOrdersByDate(storeId, min_date);
-    return bookings;
+    var products = await app.Services.GetRequiredService<IDatabaseService>().GetProductsForStore(storeId);
+    return products;
 })
-    .WithName("GetRecentOrdersForStore")
+    .WithName("GetProductsForStore")
     .WithOpenApi();
+
+// // Retrieve the bookings for a specific hotel that are after a specified date.
+// app.MapGet("/Stores/{storeId}/Orders/{min_date}", async (int storeId, DateTime min_date) => 
+// {
+//     var bookings = await app.Services.GetRequiredService<IDatabaseService>().GetOrdersByDate(storeId, min_date);
+//     return bookings;
+// })
+//     .WithName("GetRecentOrdersForStore")
+//     .WithOpenApi();
 
 
 // This endpoint is used to send a message to the Azure OpenAI endpoint.

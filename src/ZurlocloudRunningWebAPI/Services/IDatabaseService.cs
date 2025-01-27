@@ -4,8 +4,9 @@ namespace ZurlocloudRunningWebAPI.Services;
 
 public interface IDatabaseService
 {
+    Task<IEnumerable<AllProducts>> GetProducts();
     Task<IEnumerable<Store>> GetStores();
-    Task<IEnumerable<Orders>> GetOrdersForStore(int storeId);
-    Task<IEnumerable<Orders>> GetOrdersByDate(int storeId, DateTime dt);
-    Task<IEnumerable<Orders>> GetOrdersWithMultipleProducts();
+    Task<IEnumerable<StoreProducts>> GetProductsForStore(int storeId);
+    // Task<IEnumerable<Orders>> GetOrdersByDate(int storeId, DateTime dt);
+    // Task<IEnumerable<Orders>> GetOrdersWithMultipleProducts();
 }
