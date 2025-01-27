@@ -18,6 +18,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Load environment variables from .env file
 Env.Load();
 
+var aoai_endpoint = Environment.GetEnvironmentVariable("AzureOpenAI__Endpoint");
+var aoai_deploymentName = Environment.GetEnvironmentVariable("AzureOpenAI__DeploymentName");
+var aoai_apiKey = Environment.GetEnvironmentVariable("AzureOpenAI__ApiKey");
+var aoai_embeddingDeploymentName = Environment.GetEnvironmentVariable("AzureOpenAI__EmbeddingDeploymentName");
+var cosmosdb_connectionString = Environment.GetEnvironmentVariable("CosmosDB__ConnectionString");
+
 var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .AddEnvironmentVariables()
@@ -45,18 +51,18 @@ builder.Services.AddSingleton<CosmosClient>((_) =>
 
 builder.Services.AddSingleton<Kernel>((_) =>
 {
-    Console.WriteLine("Endpoint: " + builder.Configuration["AzureOpenAI:Endpoint"]);
+    Console.WriteLine("Endpoint: " + aoai_endpoint);
     IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
     kernelBuilder.AddAzureOpenAIChatCompletion(
-        deploymentName: builder.Configuration["AzureOpenAI:DeploymentName"]!,
-        endpoint: builder.Configuration["AzureOpenAI:Endpoint"]!,
-        apiKey: builder.Configuration["AzureOpenAI:ApiKey"]!
+        deploymentName: aoai_deploymentName!,
+        endpoint: aoai_endpoint!,
+        apiKey: aoai_apiKey!
     );
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
-         deploymentName: builder.Configuration["AzureOpenAI:EmbeddingDeploymentName"]!,
-         endpoint: builder.Configuration["AzureOpenAI:Endpoint"]!,
-         apiKey: builder.Configuration["AzureOpenAI:ApiKey"]!
+         deploymentName: aoai_deploymentName!,
+         endpoint:aoai_endpoint!,
+         apiKey: aoai_apiKey!
      );
 #pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     kernelBuilder.Plugins.AddFromType<DatabaseService>();
@@ -64,7 +70,7 @@ builder.Services.AddSingleton<Kernel>((_) =>
     kernelBuilder.Services.AddSingleton<CosmosClient>((_) =>
     {
         CosmosClient client = new(
-            connectionString: builder.Configuration["CosmosDB:ConnectionString"]!
+            connectionString: cosmosdb_connectionString!
         );
         return client;
     });
@@ -114,7 +120,7 @@ app.MapGet("/Products", async () =>
     .WithOpenApi();
 
 
-// Retrieve the bookings for a specific hotel.
+// Retrieve the products for a specific store.
 app.MapGet("/Stores/{storeId}/Products/", async (int storeId) => 
 {
     var products = await app.Services.GetRequiredService<IDatabaseService>().GetProductsForStore(storeId);
@@ -122,6 +128,14 @@ app.MapGet("/Stores/{storeId}/Products/", async (int storeId) =>
 })
     .WithName("GetProductsForStore")
     .WithOpenApi();
+
+// app.MapGet("/MultiProductOrder", async () => 
+// {
+//     var orders = await app.Services.GetRequiredService<IDatabaseService>().GetOrderDetailsWithMultipleProducts();
+//     return orders;
+// })
+//     .WithName("GetOrderDetailsWithMultipleProducts")
+//     .WithOpenApi();
 
 // // Retrieve the bookings for a specific hotel that are after a specified date.
 // app.MapGet("/Stores/{storeId}/Orders/{min_date}", async (int storeId, DateTime min_date) => 
@@ -137,6 +151,7 @@ app.MapGet("/Stores/{storeId}/Products/", async (int storeId) =>
 app.MapPost("/Chat", async Task<string> (HttpRequest request) =>
 {
     var message = await Task.FromResult(request.Form["message"]);
+    Console.WriteLine("Message: " + message.ToString());
     var kernel = app.Services.GetRequiredService<Kernel>();
     var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
     var executionSettings = new OpenAIPromptExecutionSettings

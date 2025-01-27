@@ -38,18 +38,32 @@ IF OBJECT_ID('dbo.Orders') IS NULL
 BEGIN
     CREATE TABLE dbo.Orders
     (
-        OrderID INT NOT NULL CONSTRAINT [PK_Order] PRIMARY KEY CLUSTERED,
+        OrderID INT NOT NULL CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED,
         CustomerID INT NOT NULL,
         StoreID INT NOT NULL,
-        ProductID INT NOT NULL,
         OrderDate DATE NOT NULL,
-        TotalAmount DECIMAL(10, 2) NOT NULL,
-        CONSTRAINT [FK_Order_Customer] FOREIGN KEY(CustomerID) REFERENCES dbo.Customer(CustomerID),
-        CONSTRAINT [FK_Order_Store] FOREIGN KEY(StoreID) REFERENCES dbo.Store(StoreID),
-        CONSTRAINT [FK_Order_Product] FOREIGN KEY(ProductID) REFERENCES dbo.AllProducts(ProductID)
+        CONSTRAINT [FK_Orders_Customer] FOREIGN KEY(CustomerID) REFERENCES dbo.Customer(CustomerID),
+        CONSTRAINT [FK_Orders_Store] FOREIGN KEY(StoreID) REFERENCES dbo.Store(StoreID)
     );
 END
 GO
+
+
+IF OBJECT_ID('dbo.OrderDetails') IS NULL
+BEGIN
+    CREATE TABLE dbo.OrderDetails
+    (
+        OrderDetailID INT NOT NULL CONSTRAINT [PK_OrderDetail] PRIMARY KEY CLUSTERED,
+        OrderID INT NOT NULL,
+        ProductID INT NOT NULL,
+        Quantity INT NOT NULL,
+        Price DECIMAL(10, 2) NOT NULL,
+        CONSTRAINT [FK_OrderDetails_Order] FOREIGN KEY(OrderID) REFERENCES dbo.Orders(OrderID),
+        CONSTRAINT [FK_OrderDetails_Product] FOREIGN KEY(ProductID) REFERENCES dbo.AllProducts(ProductID)
+    );
+END
+GO
+
 
 IF OBJECT_ID('dbo.StoreProducts') IS NULL
 BEGIN
@@ -261,37 +275,70 @@ BEGIN
 	INSERT INTO dbo.Orders
 	(
 		OrderID,
-		CustomerID,
-		StoreID,
-		ProductID,
-		OrderDate,
-		TotalAmount
+        CustomerID,
+        StoreID,
+        OrderDate
 	)
 	VALUES
-	(1, 3, 2, 1, '2023-01-06', 155.00),
-	(2, 2, 2, 12, '2023-01-19', 35.00),
-	(3, 3, 4, 7, '2023-03-16', 145.00),
-	(4, 1, 1, 1, '2023-02-09', 120.00),
-	(5, 4, 3, 13, '2023-03-11', 25.00),
-	(6, 1, 4, 5, '2023-05-09', 150.00),
-	(7, 5, 1, 2, '2023-07-02', 170.00),
-	(8, 3, 3, 13, '2023-08-23', 25.00),
-	(9, 5, 1, 3, '2023-09-04', 130.00),
-	(10, 2, 1, 1, '2024-09-06', 120.00),
-	(11, 3, 4, 7, '2024-10-06', 145.00),
-	(12, 4, 4, 5, '2024-10-06', 150.00),
-	(13, 1, 4, 7, '2025-11-15', 145.00),
-	(14, 5, 3, 2, '2025-11-06', 170.00),
-	(15, 1, 3, 7, '2025-12-29', 145.00),
-	(16, 2, 2, 4, '2026-01-10', 110.00),
-	(17, 3, 1, 6, '2026-02-14', 140.00),
-	(18, 4, 3, 8, '2026-03-18', 135.00),
-	(19, 5, 4, 9, '2026-04-22', 160.00),
-	(20, 1, 2, 10, '2026-05-26', 100.00),
-	(21, 2, 1, 11, '2026-06-30', 120.00),
-	(22, 3, 3, 14, '2026-07-04', 10.00),
-	(23, 4, 4, 15, '2026-08-08', 15.00),
-	(24, 5, 1, 16, '2026-09-12', 200.00),
-	(25, 1, 2, 17, '2026-10-16', 200.00);
+	(1, 3, 2, '2023-01-06'),
+    (2, 2, 2, '2023-01-19'),
+    (3, 3, 4, '2023-03-16'),
+    (4, 1, 1, '2023-02-09'),
+    (5, 4, 3, '2023-03-11'),
+    (6, 1, 4, '2023-05-09'),
+    (7, 5, 1, '2023-07-02'),
+    (8, 3, 3, '2023-08-23'),
+    (9, 5, 1, '2023-09-04'),
+    (10, 2, 1, '2024-09-06'),
+    (11, 3, 4, '2024-10-06'),
+    (12, 4, 4, '2024-10-06'),
+    (13, 1, 4, '2025-11-15'),
+    (14, 5, 3, '2025-11-06');
+END
+GO
+
+IF NOT EXISTS
+(
+	SELECT 1
+	FROM dbo.OrderDetails
+)
+BEGIN
+	INSERT INTO dbo.OrderDetails
+	(
+		OrderDetailID,
+		OrderID,
+		ProductID,
+		Quantity,
+		Price
+	)
+	VALUES
+	(1, 1, 1, 1, 155.00),
+	(2, 2, 12, 1, 35.00),
+	(3, 3, 7, 1, 145.00),
+	(4, 4, 1, 1, 120.00),
+	(5, 5, 13, 1, 25.00),
+	(6, 6, 5, 1, 150.00),
+	(7, 7, 2, 1, 170.00),
+	(8, 8, 13, 1, 25.00),
+	(9, 9, 3, 1, 130.00),
+	(10, 10, 1, 1, 120.00),
+	(11, 11, 7, 1, 145.00),
+	(12, 12, 5, 1, 150.00),
+	(13, 13, 7, 1, 145.00),
+	(14, 14, 2, 1, 170.00),
+	(15, 1, 2, 2, 180.00),
+	(16, 2, 3, 1, 130.00),
+	(17, 3, 4, 1, 110.00),
+	(18, 4, 5, 1, 150.00),
+	(19, 5, 6, 1, 140.00),
+	(20, 6, 7, 1, 125.00),
+	(21, 7, 8, 1, 135.00),
+	(22, 8, 9, 1, 160.00),
+	(23, 9, 10, 1, 100.00),
+	(24, 10, 11, 1, 120.00),
+	(25, 11, 12, 1, 35.00),
+	(26, 12, 13, 1, 25.00),
+	(27, 13, 14, 1, 10.00),
+	(28, 14, 15, 1, 15.00);
 END
 GO

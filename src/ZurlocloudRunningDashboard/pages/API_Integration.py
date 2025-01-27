@@ -12,10 +12,10 @@ def get_stores():
     return response
 
 @st.cache_data
-def get_store_orders(store_id):
-    """Return a list of bookings for the specified hotel."""
+def get_store_products(store_id):
+    """Return a list of products for the specified hotel."""
     api_endpoint = st.secrets["api"]["endpoint"]
-    response = requests.get(f"{api_endpoint}/Stores/{store_id}/Orders", timeout=10)
+    response = requests.get(f"{api_endpoint}/Stores/{store_id}/Products", timeout=10)
     return response
 
 @st.cache_data
@@ -52,10 +52,10 @@ def main():
     if selected_store:
         print(selected_store)
         store_id = selected_store["id"]
-        orders = get_store_orders(store_id).json()
-        print(orders)
-        st.write("### Orders")
-        st.table(orders)
+        products = get_store_products(store_id).json()
+        print(products)
+        st.write("### Products")
+        st.table(products)
 
     st.write(
         """
